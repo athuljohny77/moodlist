@@ -31,6 +31,10 @@ async function generatePlaylist() {
             body: 'grant_type=client_credentials'
         });
 
+        if (!tokenResponse.ok) {
+            throw new Error("Failed to get access token for generating playlist");
+        }
+
         const tokenData = await tokenResponse.json();
         const accessToken = tokenData.access_token;
 
@@ -39,6 +43,10 @@ async function generatePlaylist() {
                 'Authorization': 'Bearer ' + accessToken
             }
         });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch recommendations");
+        }
 
         const data = await response.json();
         const tracks = data.tracks;
@@ -63,7 +71,7 @@ async function generatePlaylist() {
 
 async function addToSpotify() {
     const trackURIs = window.generatedTrackURIs;
-    const userAccessToken = getUserAccessToken();
+    const userAccessToken = await getUserAccessToken();
     const mood = window.selectedMood;
     const currentDate = new Date().toLocaleString();
 
@@ -78,7 +86,13 @@ async function addToSpotify() {
                 'Authorization': 'Bearer ' + userAccessToken
             }
         });
+
+        if (!userResponse.ok) {
+            throw new Error("Failed to get user details");
+        }
+
         const userData = await userResponse.json();
+        console.log("User data retrieved:", userData);
 
         const playlistName = `Moodlist - ${mood.charAt(0).toUpperCase() + mood.slice(1)} - ${currentDate}`;
         const playlistDescription = `A ${mood} playlist generated on ${currentDate} | Moodlist - Created by Athul Johny © 2024`;
@@ -96,7 +110,12 @@ async function addToSpotify() {
             })
         });
 
+        if (!playlistResponse.ok) {
+            throw new Error("Failed to create playlist");
+        }
+
         const playlistData = await playlistResponse.json();
+        console.log("Playlist created:", playlistData);
 
         const addTracksResponse = await fetch(`https://api.spotify.com/v1/playlists/${playlistData.id}/tracks`, {
             method: 'POST',
@@ -109,14 +128,32 @@ async function addToSpotify() {
             })
         });
 
-        if (addTracksResponse.ok) {
-            alert('Moodlist added to your Spotify account!');
-        } else {
-            console.error('Error adding tracks to playlist:', await addTracksResponse.json());
-            alert('Failed to add tracks to the playlist. Please try again later.');
+        if (!addTracksResponse.ok) {
+            throw new Error("Failed to add tracks to playlist");
         }
+
+        console.log("Tracks added to playlist:", await addTracksResponse.json());
+        alert('Moodlist added to your Spotify account!');
     } catch (error) {
         console.error('Error creating playlist:', error);
         alert('Failed to create playlist. Please try again later.');
     }
+}
+
+async function getUserAccessToken() {
+    const clientId = spotifyConfig.clientId;
+    const redirectUri = spotifyConfig.redirectUri;
+    const scopes = 'playlist-modify-private playlist-modify-public';
+
+    // Check if access token is already in URL
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    let accessToken = params.get('access_token');
+
+    if (!accessToken) {
+        const url = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}`;
+        window.location = url;
+    }
+
+    return accessToken;
 }
