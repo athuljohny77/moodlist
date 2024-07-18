@@ -1,9 +1,26 @@
 // script.js
 
+const moodGenres = {
+    happy: 'pop',
+    sad: 'acoustic',
+    relaxed: 'chill',
+    energetic: 'dance',
+    calm: 'ambient',
+    party: 'party',
+    romantic: 'romance',
+    workout: 'work-out'
+};
+
 async function generatePlaylist() {
     const mood = document.getElementById('mood').value;
     const playlistDiv = document.getElementById('playlist');
     playlistDiv.innerHTML = 'Generating playlist...';
+
+    // Ensure the selected mood has a corresponding genre
+    if (!moodGenres[mood]) {
+        playlistDiv.innerHTML = 'Invalid mood selected. Please try again.';
+        return;
+    }
 
     try {
         const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
@@ -18,7 +35,7 @@ async function generatePlaylist() {
         const tokenData = await tokenResponse.json();
         const accessToken = tokenData.access_token;
 
-        const response = await fetch(`https://api.spotify.com/v1/recommendations?seed_genres=${mood}`, {
+        const response = await fetch(`https://api.spotify.com/v1/recommendations?seed_genres=${moodGenres[mood]}`, {
             headers: {
                 'Authorization': 'Bearer ' + accessToken
             }
