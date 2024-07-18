@@ -1,0 +1,64 @@
+/* styles.css */
+
+body {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    color: #1DB954;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+select, button {
+    background-color: #1DB954;
+    border: none;
+    border-radius: 5px;
+    color: #121212;
+    font-size: 16px;
+    margin: 10px 0;
+    padding: 10px;
+    width: 200px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+select:hover, button:hover {
+    background-color: #1ed760;
+}
+
+#playlist {
+    margin-top: 20px;
+    text-align: left;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#playlist h2 {
+    color: #1DB954;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+#playlist p {
+    background-color: #282828;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 5px 0;
+}
