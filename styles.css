@@ -12,10 +12,11 @@ body {
 h1 {
     color: #1DB954;
     margin-bottom: 20px;
+    font-size: 2.5em;
 }
 
 p {
-    font-size: 18px;
+    font-size: 1.2em;
     margin-bottom: 10px;
 }
 
@@ -24,22 +25,23 @@ select, button {
     border: none;
     border-radius: 5px;
     color: #121212;
-    font-size: 16px;
+    font-size: 1em;
     margin: 10px 0;
-    padding: 10px;
-    width: 200px;
+    padding: 10px 20px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    width: 220px;
 }
 
 select:hover, button:hover {
     background-color: #1ed760;
+    transform: scale(1.05);
 }
 
 #playlist {
@@ -48,25 +50,29 @@ select:hover, button:hover {
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+    background-color: #282828;
+    padding: 20px;
+    border-radius: 10px;
 }
 
 #playlist h2 {
     color: #1DB954;
-    font-size: 24px;
+    font-size: 2em;
     margin-bottom: 10px;
 }
 
 #playlist p {
-    background-color: #282828;
+    background-color: #333333;
     border-radius: 5px;
     padding: 10px;
     margin: 5px 0;
+    font-size: 1em;
 }
 
 footer {
     margin-top: 40px;
     padding-top: 20px;
     border-top: 1px solid #1DB954;
-    font-size: 14px;
+    font-size: 0.9em;
     color: #777;
 }
