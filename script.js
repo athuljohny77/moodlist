@@ -54,6 +54,7 @@ async function generatePlaylist() {
 
         document.getElementById('addToSpotifyButton').style.display = 'inline-block';
         window.generatedTrackURIs = trackURIs;
+        window.selectedMood = mood;
 
     } catch (error) {
         console.error('Error generating playlist:', error);
@@ -64,6 +65,8 @@ async function generatePlaylist() {
 async function addToSpotify() {
     const trackURIs = window.generatedTrackURIs;
     const userAccessToken = await getUserAccessToken();
+    const mood = window.selectedMood;
+    const currentDate = new Date().toLocaleString();
 
     if (!userAccessToken) {
         alert('Failed to get access token. Please try again.');
@@ -77,6 +80,9 @@ async function addToSpotify() {
     });
     const userData = await userResponse.json();
 
+    const playlistName = `Moodlist - ${mood.charAt(0).toUpperCase() + mood.slice(1)} Playlist - ${currentDate}`;
+    const playlistDescription = `A ${mood} playlist generated on ${currentDate} | Moodlist - Created by Athul Johny © 2024`;
+
     const playlistResponse = await fetch(`https://api.spotify.com/v1/users/${userData.id}/playlists`, {
         method: 'POST',
         headers: {
@@ -84,8 +90,8 @@ async function addToSpotify() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            name: 'Moodlist Playlist',
-            description: 'Playlist generated based on your mood',
+            name: playlistName,
+            description: playlistDescription,
             public: false
         })
     });
