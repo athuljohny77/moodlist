@@ -64,7 +64,7 @@ async function generatePlaylist() {
 
 async function addToSpotify() {
     const trackURIs = window.generatedTrackURIs;
-    const userAccessToken = await getUserAccessToken();
+    const userAccessToken = getUserAccessToken();
     const mood = window.selectedMood;
     const currentDate = new Date().toLocaleString();
 
@@ -80,7 +80,7 @@ async function addToSpotify() {
     });
     const userData = await userResponse.json();
 
-    const playlistName = `Moodlist - ${mood.charAt(0).toUpperCase() + mood.slice(1)} Playlist - ${currentDate}`;
+    const playlistName = `Moodlist - ${mood.charAt(0).toUpperCase() + mood.slice(1)} - ${currentDate}`;
     const playlistDescription = `A ${mood} playlist generated on ${currentDate} | Moodlist - Created by Athul Johny © 2024`;
 
     const playlistResponse = await fetch(`https://api.spotify.com/v1/users/${userData.id}/playlists`, {
@@ -109,23 +109,5 @@ async function addToSpotify() {
         })
     });
 
-    alert('Playlist added to your Spotify account!');
-}
-
-async function getUserAccessToken() {
-    const clientId = spotifyConfig.clientId;
-    const redirectUri = spotifyConfig.redirectUri;
-    const scopes = 'playlist-modify-private playlist-modify-public';
-
-    // Check if access token is already in URL
-    const hash = window.location.hash.substring(1);
-    const params = new URLSearchParams(hash);
-    let accessToken = params.get('access_token');
-
-    if (!accessToken) {
-        const url = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}`;
-        window.location = url;
-    }
-
-    return accessToken;
+    alert('Moodlist added to your Spotify account!');
 }
