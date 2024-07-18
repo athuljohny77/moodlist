@@ -14,7 +14,7 @@ function getUserAccessToken() {
         const url = `https://accounts.spotify.com/authorize?client_id=${spotifyConfig.clientId}&response_type=token&redirect_uri=${encodeURIComponent(spotifyConfig.redirectUri)}&scope=${encodeURIComponent(spotifyConfig.scopes)}`;
         window.location = url;
     } else {
-        window.history.replaceState({}, document.title, "/moodlist"); // Clean the URL
+        window.history.replaceState({}, document.title, window.location.pathname); // Clean the URL
     }
 
     return accessToken;

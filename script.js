@@ -16,7 +16,6 @@ async function generatePlaylist() {
     const playlistDiv = document.getElementById('playlist');
     playlistDiv.innerHTML = 'Generating playlist...';
 
-    // Ensure the selected mood has a corresponding genre
     if (!moodGenres[mood]) {
         playlistDiv.innerHTML = 'Invalid mood selected. Please try again.';
         return;
@@ -73,41 +72,51 @@ async function addToSpotify() {
         return;
     }
 
-    const userResponse = await fetch('https://api.spotify.com/v1/me', {
-        headers: {
-            'Authorization': 'Bearer ' + userAccessToken
+    try {
+        const userResponse = await fetch('https://api.spotify.com/v1/me', {
+            headers: {
+                'Authorization': 'Bearer ' + userAccessToken
+            }
+        });
+        const userData = await userResponse.json();
+
+        const playlistName = `Moodlist - ${mood.charAt(0).toUpperCase() + mood.slice(1)} - ${currentDate}`;
+        const playlistDescription = `A ${mood} playlist generated on ${currentDate} | Moodlist - Created by Athul Johny © 2024`;
+
+        const playlistResponse = await fetch(`https://api.spotify.com/v1/users/${userData.id}/playlists`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + userAccessToken,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: playlistName,
+                description: playlistDescription,
+                public: false
+            })
+        });
+
+        const playlistData = await playlistResponse.json();
+
+        const addTracksResponse = await fetch(`https://api.spotify.com/v1/playlists/${playlistData.id}/tracks`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + userAccessToken,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                uris: trackURIs
+            })
+        });
+
+        if (addTracksResponse.ok) {
+            alert('Moodlist added to your Spotify account!');
+        } else {
+            console.error('Error adding tracks to playlist:', await addTracksResponse.json());
+            alert('Failed to add tracks to the playlist. Please try again later.');
         }
-    });
-    const userData = await userResponse.json();
-
-    const playlistName = `Moodlist - ${mood.charAt(0).toUpperCase() + mood.slice(1)} - ${currentDate}`;
-    const playlistDescription = `A ${mood} playlist generated on ${currentDate} | Moodlist - Created by Athul Johny © 2024`;
-
-    const playlistResponse = await fetch(`https://api.spotify.com/v1/users/${userData.id}/playlists`, {
-        method: 'POST',
-        headers: {
-            'Authorization': 'Bearer ' + userAccessToken,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            name: playlistName,
-            description: playlistDescription,
-            public: false
-        })
-    });
-
-    const playlistData = await playlistResponse.json();
-
-    await fetch(`https://api.spotify.com/v1/playlists/${playlistData.id}/tracks`, {
-        method: 'POST',
-        headers: {
-            'Authorization': 'Bearer ' + userAccessToken,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            uris: trackURIs
-        })
-    });
-
-    alert('Moodlist added to your Spotify account!');
+    } catch (error) {
+        console.error('Error creating playlist:', error);
+        alert('Failed to create playlist. Please try again later.');
+    }
 }
