@@ -1,18 +1,16 @@
+// script.js
+
 async function generatePlaylist() {
     const mood = document.getElementById('mood').value;
     const playlistDiv = document.getElementById('playlist');
     playlistDiv.innerHTML = 'Generating playlist...';
-
-    // Replace with your Spotify client ID and secret
-    const clientId = '1008dc2ab8e5414796ea75fe9108dc41';
-    const clientSecret = 'c874c5d660e24cd68c32c822cc6c3d78';
 
     try {
         const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret)
+                'Authorization': 'Basic ' + btoa(spotifyConfig.clientId + ':' + spotifyConfig.clientSecret)
             },
             body: 'grant_type=client_credentials'
         });
@@ -49,6 +47,11 @@ async function generatePlaylist() {
 async function addToSpotify() {
     const trackURIs = window.generatedTrackURIs;
     const userAccessToken = await getUserAccessToken();
+
+    if (!userAccessToken) {
+        alert('Failed to get access token. Please try again.');
+        return;
+    }
 
     const userResponse = await fetch('https://api.spotify.com/v1/me', {
         headers: {
@@ -87,18 +90,19 @@ async function addToSpotify() {
 }
 
 async function getUserAccessToken() {
-    const clientId = '1008dc2ab8e5414796ea75fe9108dc41';
-    const redirectUri = 'https://athuljohny77.github.io/moodlist'; // Your GitHub Pages URL
+    const clientId = spotifyConfig.clientId;
+    const redirectUri = spotifyConfig.redirectUri;
     const scopes = 'playlist-modify-private playlist-modify-public';
 
-    const url = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}`;
-    
-    window.location = url;
-
-    // Extract access token from the URL hash
+    // Check if access token is already in URL
     const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
-    const accessToken = params.get('access_token');
+    let accessToken = params.get('access_token');
+
+    if (!accessToken) {
+        const url = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}`;
+        window.location = url;
+    }
 
     return accessToken;
 }
