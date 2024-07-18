@@ -106,7 +106,7 @@ async function addToSpotify() {
         console.log("User data retrieved:", userData);
 
         const playlistName = `Moodlist - ${mood.charAt(0).toUpperCase() + mood.slice(1)} (${formattedDate})`;
-        const playlistDescription = `A ${mood} playlist generated on ${formattedDate} | Moodlist - Created by Athul Johny © 2024`;
+        const playlistDescription = `A ${mood} playlist generated on ${currentDate} | Moodlist - Created by Athul Johny © 2024`;
 
         const playlistResponse = await fetch(`https://api.spotify.com/v1/users/${userData.id}/playlists`, {
             method: 'POST',
