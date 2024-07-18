@@ -37,7 +37,6 @@ async function generatePlaylist() {
             playlistDiv.appendChild(trackElement);
         });
 
-        document.getElementById('regenerateButton').style.display = 'inline-block';
         document.getElementById('addToSpotifyButton').style.display = 'inline-block';
         window.generatedTrackURIs = trackURIs;
 
@@ -88,8 +87,8 @@ async function addToSpotify() {
 }
 
 async function getUserAccessToken() {
-    const clientId = 'YOUR_SPOTIFY_CLIENT_ID';
-    const redirectUri = 'https://yourusername.github.io/moodlist'; // Your GitHub Pages URL
+    const clientId = '1008dc2ab8e5414796ea75fe9108dc41';
+    const redirectUri = 'https://athuljohny77.github.io/moodlist'; // Your GitHub Pages URL
     const scopes = 'playlist-modify-private playlist-modify-public';
 
     const url = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}`;
