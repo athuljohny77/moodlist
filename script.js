@@ -11,6 +11,16 @@ const moodGenres = {
     workout: 'work-out'
 };
 
+function formatDate(date) {
+    const options = { month: 'long', day: 'numeric' };
+    const formattedDate = date.toLocaleDateString(undefined, options);
+    const hours = date.getHours();
+    const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
+    return `${formattedDate}, ${formattedTime}`;
+}
+
 async function generatePlaylist() {
     const mood = document.getElementById('mood').value;
     const playlistDiv = document.getElementById('playlist');
@@ -73,7 +83,8 @@ async function addToSpotify() {
     const trackURIs = window.generatedTrackURIs;
     const userAccessToken = await getUserAccessToken();
     const mood = window.selectedMood;
-    const currentDate = new Date().toLocaleString();
+    const currentDate = new Date();
+    const formattedDate = formatDate(currentDate);
 
     if (!userAccessToken) {
         alert('Failed to get access token. Please try again.');
@@ -94,8 +105,8 @@ async function addToSpotify() {
         const userData = await userResponse.json();
         console.log("User data retrieved:", userData);
 
-        const playlistName = `Moodlist - ${mood.charAt(0).toUpperCase() + mood.slice(1)} - ${currentDate}`;
-        const playlistDescription = `A ${mood} playlist generated on ${currentDate} | Moodlist - Created by Athul Johny © 2024`;
+        const playlistName = `Moodlist - ${mood.charAt(0).toUpperCase() + mood.slice(1)} (${formattedDate})`;
+        const playlistDescription = `A ${mood} playlist generated on ${formattedDate} | Moodlist - Created by Athul Johny © 2024`;
 
         const playlistResponse = await fetch(`https://api.spotify.com/v1/users/${userData.id}/playlists`, {
             method: 'POST',
